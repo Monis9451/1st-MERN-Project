@@ -29,11 +29,21 @@ app.get("/listing", async(req, res)=>{
     res.render("listing/index", {allListings})
 })
 
+//New route
+app.get("/listing/new", (req, res)=>{
+    res.render('listing/new.ejs')
+})
+
 //Show route
 app.get("/listing/:id", async(req, res)=>{
     let {id} = req.params;
     const listData = await Listing.findById(id);
     res.render("listing/show",{listData})
+})
+
+//Create route
+app.post("/listing", async(req, res)=>{
+    
 })
 
 // app.get("/testListing", async(req, res)=>{
