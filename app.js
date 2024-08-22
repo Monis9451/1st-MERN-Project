@@ -43,7 +43,21 @@ app.get("/listing/:id", async(req, res)=>{
 
 //Create route
 app.post("/listing", async(req, res)=>{
-    
+    await Listing.create(req.body.listing);
+    res.redirect("/listing")
+})
+
+//Edit route
+app.get("/listing/:id/edit", async(req, res)=>{
+    let {id} = req.params
+    let data = await Listing.findById(id)
+    res.render("listing/edit", {data})
+})
+
+//Save editing route
+app.post("/listing/:id", async(req, res)=>{
+    let newData = req.body.listing
+    console.log(newData)
 })
 
 // app.get("/testListing", async(req, res)=>{

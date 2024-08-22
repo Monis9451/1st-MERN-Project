@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Showing details</title>
+    <title>WanderLust</title>
 </head>
 <body>
     <h3>Listing detail</h3>
@@ -12,7 +12,8 @@
         <li><%= listData.description %></li>
         <li>&#8377;<%= listData.price.toLocaleString("en-PK") %></li>
         <li><%= listData.location %></li>
-        <li><%= listData.country %></li>
+        <li><%= listData.country %></li><br><br>
+        <a href="/listing/<%= listData._id %>/edit">Edit this listing</a>
     </ul>
 </body>
 </html>
