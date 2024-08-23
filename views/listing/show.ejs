@@ -13,7 +13,8 @@
         <li>&#8377;<%= listData.price.toLocaleString("en-PK") %></li>
         <li><%= listData.location %></li>
         <li><%= listData.country %></li><br><br>
-        <a href="/listing/<%= listData._id %>/edit">Edit this listing</a>
+        <a href="/listing/<%= listData._id %>/edit">Edit this listing</a><br><br>
+        <form method="post" action="/listing/<%= listData._id %>?_method=DELETE"><button>Delete this listing</button></form>
     </ul>
 </body>
 </html>

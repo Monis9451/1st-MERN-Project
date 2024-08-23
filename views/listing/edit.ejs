@@ -7,9 +7,9 @@
 </head>
 <body>
     <h3>Edit listing</h3><br><br>
-    <form method="POST" action="/listing/<%= data._id %>">
+    <form method="POST" action="/listing/<%= data._id %>?_method=PATCH">
         <input name="listing[title]" placeholder="Title" type="text" value="<%= data.title %>"><br><br>
-        <textarea name="listing[description]" placeholder="Description" type="text" value="<%= data.description %>"></textarea><br><br>
+        <textarea name="listing[description]" placeholder="Description" type="text"><%= data.description %></textarea><br><br>
         <input name="listing[image]" placeholder="Image URL" type="url" value="<%= data.image %>"><br><br>
         <input name="listing[price]" placeholder="Price" type="number" value="<%= data.price %>"><br><br>
         <input name="listing[country]" placeholder="Country" type="text" value="<%= data.country %>"><br><br>
