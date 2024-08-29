@@ -7,6 +7,8 @@ const Listing = require("./models/listing.js")
 const path = require("path")
 const methodOverride = require("method-override")
 const ejsMate = require("ejs-mate")
+const wrapAsync = require("./utils/wrapAsync.js")
+const ExpressError = require("./utils/ExpressError.js")
 app.set("view engine", "ejs");
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
@@ -18,10 +20,6 @@ async function main(){
     await mongoose.connect(MONGO_URL);
 };
 main().then(()=>{console.log("Connection successfull")}).catch((err)=>{console.log(`Following error is occurring in connection: ${err}`)});
-
-app.listen(port, ()=>{
-    console.log("Port 8080 is listening");
-});
 
 //Root
 app.get("/", (req, res)=>{
@@ -47,10 +45,10 @@ app.get("/listing/:id", async(req, res)=>{
 })
 
 //Create route
-app.post("/listing", async(req, res)=>{
-    await Listing.create(req.body.listing);
-    res.redirect("/listing");
-})
+    app.post("/listing",wrapAsync(async(req, res, next)=>{
+            await Listing.create(req.body.listing);
+            res.redirect("/listing");
+    }))
 
 //Edit route
 app.get("/listing/:id/edit", async(req, res)=>{
@@ -73,6 +71,16 @@ app.delete("/listing/:id", async(req, res)=>{
     res.redirect("/listing");
 })
 
+app.all("*", (req, res, next)=>{
+    next(new ExpressError(404, "Page Not Found"));
+})
+
+// Server error handling
+app.use((err, req, res, next)=>{
+    let {statusCode, message} = err;
+    res.status(statusCode).send(message);
+})
+
 // app.get("/testListing", async(req, res)=>{
 //     await Listing.create({
 //         title:"My new villa",
@@ -84,4 +92,7 @@ app.delete("/listing/:id", async(req, res)=>{
 //     .then((res)=>{console.log(res)})
 //     res.send("Testing successfull")
 // });'
-//Continueing Streak
+
+app.listen(port, ()=>{
+    console.log("Port 8080 is listening");
+});
