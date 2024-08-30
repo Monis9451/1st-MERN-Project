@@ -81,7 +81,7 @@ app.all("*", (req, res, next)=>{
     next(new ExpressError(404, "Page Not Found"));
 })
 
-// Server error handling
+// Server error handler
 app.use((err, req, res, next)=>{
     let {statusCode=500, message="Something went wrong"} = err;
     res.status(statusCode).render("listing/error",{err})
