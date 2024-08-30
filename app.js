@@ -27,10 +27,10 @@ app.get("/", (req, res)=>{
 });
 
 //Index route
-app.get("/listing", async(req, res)=>{
+app.get("/listing", wrapAsync(async(req, res)=>{
     let allListings = await Listing.find();
     res.render("listing/index", {allListings})
-})
+}))
 
 //New route
 app.get("/listing/new", (req, res)=>{
@@ -38,38 +38,44 @@ app.get("/listing/new", (req, res)=>{
 })
 
 //Show route
-app.get("/listing/:id", async(req, res)=>{
+app.get("/listing/:id", wrapAsync(async(req, res)=>{
     let {id} = req.params;
     const listData = await Listing.findById(id);
     res.render("listing/show",{listData})
-})
+}))
 
 //Create route
     app.post("/listing",wrapAsync(async(req, res, next)=>{
+        if(!req.body.listing){
+            throw new ExpressError(400, "Send valid Data for listing")
+        }
             await Listing.create(req.body.listing);
             res.redirect("/listing");
     }))
 
 //Edit route
-app.get("/listing/:id/edit", async(req, res)=>{
+app.get("/listing/:id/edit", wrapAsync(async(req, res)=>{
     let {id} = req.params;
     let data = await Listing.findById(id);
     res.render("listing/edit", {data});
-})
+}))
 
-//Save editing route
-app.patch("/listing/:id", async(req, res)=>{
+//Update route
+app.patch("/listing/:id", wrapAsync(async(req, res)=>{
+    if(!req.body.listing){
+        throw new ExpressError(400, "Send valid Data for listing")
+    }
     let {id} = req.params;
     await Listing.findByIdAndUpdate(id, req.body.listing);
     res.redirect(`/listing/${id}`);
-})
+}))
 
 //Delete route
-app.delete("/listing/:id", async(req, res)=>{
+app.delete("/listing/:id", wrapAsync(async(req, res)=>{
     let {id} = req.params;
     await Listing.findByIdAndDelete(id);
     res.redirect("/listing");
-})
+}))
 
 app.all("*", (req, res, next)=>{
     next(new ExpressError(404, "Page Not Found"));
@@ -77,8 +83,9 @@ app.all("*", (req, res, next)=>{
 
 // Server error handling
 app.use((err, req, res, next)=>{
-    let {statusCode, message} = err;
-    res.status(statusCode).send(message);
+    let {statusCode=500, message="Something went wrong"} = err;
+    res.status(statusCode).render("listing/error",{err})
+    // res.status(statusCode).send(message);
 })
 
 // app.get("/testListing", async(req, res)=>{
