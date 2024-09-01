@@ -9,6 +9,7 @@ const methodOverride = require("method-override")
 const ejsMate = require("ejs-mate")
 const wrapAsync = require("./utils/wrapAsync.js")
 const ExpressError = require("./utils/ExpressError.js")
+const {listingSchema} = require("./shema.js")
 app.set("view engine", "ejs");
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
@@ -46,11 +47,12 @@ app.get("/listing/:id", wrapAsync(async(req, res)=>{
 
 //Create route
     app.post("/listing",wrapAsync(async(req, res, next)=>{
-        if(!req.body.listing){
-            throw new ExpressError(400, "Send valid Data for listing")
+        let result = listingSchema.validate(req.body);
+        if(result.error){
+            throw new ExpressError(400, result.error)
         }
-            await Listing.create(req.body.listing);
-            res.redirect("/listing");
+        await Listing.create(req.body.listing);
+        res.redirect("/listing");
     }))
 
 //Edit route
