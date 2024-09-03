@@ -22,6 +22,17 @@ async function main(){
 };
 main().then(()=>{console.log("Connection successfull")}).catch((err)=>{console.log(`Following error is occurring in connection: ${err}`)});
 
+//List validate function
+const validateListing = (req, res, next)=>{
+    let {error} = listingSchema.validate(req.body);
+    if(error){
+        let errMsg = error.details.map((el)=>el.message).join(",");
+        throw new ExpressError(400, errMsg);
+    }else{
+        next();
+    }
+}
+
 //Root
 app.get("/", (req, res)=>{
     res.send("Hey, I'm root!");
@@ -46,11 +57,7 @@ app.get("/listing/:id", wrapAsync(async(req, res)=>{
 }))
 
 //Create route
-    app.post("/listing",wrapAsync(async(req, res, next)=>{
-        let result = listingSchema.validate(req.body);
-        if(result.error){
-            throw new ExpressError(400, result.error)
-        }
+    app.post("/listing", validateListing, wrapAsync(async(req, res, next)=>{
         await Listing.create(req.body.listing);
         res.redirect("/listing");
     }))
@@ -64,9 +71,6 @@ app.get("/listing/:id/edit", wrapAsync(async(req, res)=>{
 
 //Update route
 app.patch("/listing/:id", wrapAsync(async(req, res)=>{
-    if(!req.body.listing){
-        throw new ExpressError(400, "Send valid Data for listing")
-    }
     let {id} = req.params;
     await Listing.findByIdAndUpdate(id, req.body.listing);
     res.redirect(`/listing/${id}`);
