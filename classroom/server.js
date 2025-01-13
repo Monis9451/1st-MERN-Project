@@ -19,16 +19,25 @@ const sessionOption = {
 app.use(session(sessionOption));
 app.use(flash());
 
+app.use((req, res, next)=>{
+    res.locals.errmessage = req.flash("error");
+    res.locals.succmessage = req.flash("success");
+    next();
+})
+
 app.get("/register", (req, res)=>{
     let {name = "anonymous"} = req.query;
     req.session.name = name;
-    req.flash("success", "User register successfully");
+    if(name==="anonymous"){
+        req.flash("error", "User not found!");
+    }else{
+        req.flash("success", "User register successfully!");
+    }
     res.redirect("/hello")
 })
 
 app.get("/hello", (req, res)=>{
-    console.log(req.flash("success"));
-    res.render("page.ejs", {name: req.session.name});
+    res.render("page.ejs", {name: req.session.name, msg: res.locals.message});
 })
 
 // app.get("/reqcount", (req, res)=>{

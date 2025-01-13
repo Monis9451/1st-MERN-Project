@@ -13,6 +13,7 @@ const ExpressError = require("./utils/ExpressError.js")
 const {listingSchema, reviewSchema} = require("./schema.js")
 const listing = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
+const session = require("express-session");
 app.set("view engine", "ejs");
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
@@ -21,6 +22,19 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname,"public")))
 app.use("/listing", listing);
 app.use("/listing/:id/reviews", reviews);
+
+const sessionOptions = {
+    secret:"mysupersecretcode",
+    resave: false,
+    saveUninitialized: true,
+    cookie:{
+        httpOnly:true,
+        expires: Date.now() + 1000*60*60*24*7,
+        maxAge:1000*60*60*24*7
+    }
+}
+
+app.use(session(sessionOptions));
 
 async function main(){
     await mongoose.connect(MONGO_URL);
