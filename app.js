@@ -14,14 +14,13 @@ const {listingSchema, reviewSchema} = require("./schema.js")
 const listing = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
 const session = require("express-session");
+const flash = require("connect-flash");
 app.set("view engine", "ejs");
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
 app.use(methodOverride("_method"));
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname,"public")))
-app.use("/listing", listing);
-app.use("/listing/:id/reviews", reviews);
 
 const sessionOptions = {
     secret:"mysupersecretcode",
@@ -35,17 +34,26 @@ const sessionOptions = {
 }
 
 app.use(session(sessionOptions));
+app.use(flash());
+
+//Root
+app.get("/", (req, res)=>{
+    res.send("Hey, I'm root!");
+});
+
+app.use((req, res, next)=>{
+    res.locals.success = req.flash("success");
+    next();
+})
+
+app.use("/listing", listing);
+app.use("/listing/:id/reviews", reviews);
 
 async function main(){
     await mongoose.connect(MONGO_URL);
 };
 main().then(()=>{console.log("Connection successfull")}).catch((err)=>{console.log(`Following error is occurring in connection: ${err}`)});
 
-
-//Root
-app.get("/", (req, res)=>{
-    res.send("Hey, I'm root!");
-});
 
 app.all("*", (req, res, next)=>{
     next(new ExpressError(404, "Page Not Found"));
