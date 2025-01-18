@@ -11,10 +11,14 @@ const ejsMate = require("ejs-mate")
 const wrapAsync = require("./utils/wrapAsync.js")
 const ExpressError = require("./utils/ExpressError.js")
 const {listingSchema, reviewSchema} = require("./schema.js")
-const listing = require("./routes/listing.js");
-const reviews = require("./routes/review.js");
 const session = require("express-session");
 const flash = require("connect-flash");
+const User = require("./models/user.js");
+const LocalStrategy = require("passport-local");
+const passport = require("passport");
+const reviewsRouter = require("./routes/review.js");
+const listingRouter = require("./routes/listing.js");
+const userRouter = require("./routes/user.js");
 app.set("view engine", "ejs");
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
@@ -36,6 +40,10 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
 //Root
 app.get("/", (req, res)=>{
     res.send("Hey, I'm root!");
@@ -47,8 +55,15 @@ app.use((req, res, next)=>{
     next();
 })
 
-app.use("/listing", listing);
-app.use("/listing/:id/reviews", reviews);
+// app.get("/demouser", async(req, res)=>{
+//     let fakeUser = new User({email:"student@gmail.com", username:"student"});
+//     let registeredUser = await User.register(fakeUser, "Monis9451");
+//     res.send(registeredUser);
+// });
+
+app.use("/listing", listingRouter);
+app.use("/listing/:id/reviews", reviewsRouter);
+app.use("/", userRouter);
 
 async function main(){
     await mongoose.connect(MONGO_URL);
