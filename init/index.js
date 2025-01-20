@@ -10,6 +10,10 @@ main().then(()=>{console.log("Connection successfull")}).catch((err)=>{console.l
 
 const initDB = async ()=>{
     await Listing.deleteMany({});
+    initData.data = initData.data.map((listing)=>{
+        listing.image = listing.image===""? "https://images.unsplash.com/photo-1480497490787-505ec076689f?q=80&w=1469&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D":listing.image;
+        return listing;
+    });
     await Listing.insertMany(initData.data);
     console.log("Data is initialized");
 }
