@@ -40,10 +40,6 @@ router.post("/login",saveRedirectURL, passport.authenticate("local", {failureRed
 });
 
 router.get("/logout", (req, res, next)=>{
-    if(!req.isAuthenticated()){
-        req.flash("error", "You must be logged in to log out");
-        return res.redirect("/login");
-    }
     req.logout((err)=>{
         if(err){
             return next(err);
