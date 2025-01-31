@@ -14,14 +14,16 @@
             <p class="card-text"><%= listData.country %><br></p>
             </div>
         </div>
-        <div class="btns">
-            <form action="/listing/<%= listData._id %>/edit">
-                <button class="btn btn-dark btns-in editBtn">Edit</button>
-            </form>
-            <form method="post" action="/listing/<%= listData._id %>?_method=DELETE">
-                <button class="btn btn-dark btns-in">Delete</button>
-            </form>
-        </div>
+        <% if (currentUser && currentUser._id.equals(listData.owner._id)) { %>
+            <div class="btns">
+                <form action="/listing/<%= listData._id %>/edit">
+                    <button class="btn btn-dark btns-in editBtn">Edit</button>
+                </form>
+                <form method="post" action="/listing/<%= listData._id %>?_method=DELETE">
+                    <button class="btn btn-dark btns-in">Delete</button>
+                </form>
+            </div>
+        <% } %>
         <hr>
         <div class="col-8 offset-3 mb-3">
             <h4>Leave a review</h4>
