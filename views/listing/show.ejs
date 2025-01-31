@@ -7,7 +7,7 @@
         <div class="card col-6 offset-2 listing-card">
             <img src="<%= listData.image %>" class="card-img-top show-img" alt="listing_img">
             <div class="card-body">
-            <p class="card-text"><i><%= listData.owner.username %></i><br></p>
+            <p class="card-text">Owned by <i><%= listData.owner.username %></i><br></p>
             <p class="card-text"><%= listData.description %><br></p>
             <p class="card-text">PKR <%= listData.price.toLocaleString("en-PK") %><br></p>
             <p class="card-text"><%= listData.location %><br></p>

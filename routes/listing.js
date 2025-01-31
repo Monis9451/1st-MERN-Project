@@ -35,14 +35,15 @@ router.get("/:id", wrapAsync(async(req, res)=>{
     req.flash("error", "Listing you requested for does not exist");
     res.redirect("/listing");
     }
-    console.log(listData)
     res.render("listing/show",{listData})
 }))
 
 
 //Create route
-router.post("/", validateListing,isLoggedIn, wrapAsync(async(req, res, next)=>{
-    await Listing.create(req.body.listing);
+router.post("/", validateListing, isLoggedIn, wrapAsync(async(req, res, next)=>{
+    const newListing = new Listing(req.body.listing);
+    newListing.owner = req.user._id;
+    await newListing.save();
     req.flash("success", "Successfully created a new listing");
     res.redirect("/listing");
 }))
