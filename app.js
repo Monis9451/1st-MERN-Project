@@ -1,3 +1,7 @@
+if(process.env.NODE_ENV !== "production"){
+    require("dotenv").config();
+}
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -54,12 +58,6 @@ app.use((req, res, next)=>{
     next();
 })
 
-// app.get("/demouser", async(req, res)=>{
-//     let fakeUser = new User({email:"student@gmail.com", username:"student"});
-//     let registeredUser = await User.register(fakeUser, "Monis9451");
-//     res.send(registeredUser);
-// });
-
 app.use("/listing", listingRouter);
 app.use("/listing/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
@@ -78,20 +76,7 @@ app.all("*", (req, res, next)=>{
 app.use((err, req, res, next)=>{
     let {statusCode=500, message="Something went wrong"} = err;
     res.status(statusCode).render("listing/error",{err})
-    // res.status(statusCode).send(message);
 })
-
-// app.get("/testListing", async(req, res)=>{
-//     await Listing.create({
-//         title:"My new villa",
-//         description:"By the beach",
-//         price:1200,
-//         location:"Okara, Punjab",
-//         country:"Pakistan"
-//     })
-//     .then((res)=>{console.log(res)})
-//     res.send("Testing successfull")
-// });'
 
 app.listen(port, ()=>{
     console.log("Port 8080 is listening");
