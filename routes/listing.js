@@ -10,18 +10,17 @@ const upload = multer({storage});
 
 router.route("/")
     .get(wrapAsync(listingController.index))
-    .post(isLoggedIn,upload.single('listing[image]'), validateListing, wrapAsync(listingController.createListing));
+    .post(isLoggedIn, upload.single('listing[image]'), validateListing, wrapAsync(listingController.createListing));
 
 //New route
 router.get("/new", isLoggedIn, listingController.renderNewForm)
 
 router.route("/:id")
     .get(wrapAsync(listingController.showListing))
-    .patch(validateListing, isLoggedIn, isOwner, wrapAsync(listingController.updateListing))
+    .patch(isLoggedIn, isOwner, upload.single("listing[image]"), validateListing, wrapAsync(listingController.updateListing)) // Ensure correct order of middleware
     .delete(isLoggedIn, isOwner, wrapAsync(listingController.destroyListing))
 
 //Edit route
 router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(listingController.renderEditForm))
-
 
 module.exports = router;
