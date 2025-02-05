@@ -90,3 +90,8 @@ body{
 .btns-in{
     margin-left: 1rem;
 }
+
+#map {
+    height: 400px;
+    width: 80%;
+}
