@@ -50,9 +50,9 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 //Root
-app.get("/", (req, res)=>{
-    res.send("Hey, I'm root!");
-});
+// app.get("/", (req, res)=>{
+//     res.send("Hey, I'm root!");
+// });
 
 app.use((req, res, next)=>{
     res.locals.success = req.flash("success");
